@@ -95,5 +95,15 @@ add_library(topaz SHARED
         src/utility/string.hpp
         src/utility/time.cpp
         src/utility/time.hpp
-        src/utility/time.inl src/graphics/sprite.cpp src/graphics/sprite.hpp src/physics/dynamic_sprite.cpp src/physics/dynamic_sprite.hpp src/graphics/animated_texture.cpp src/graphics/animated_texture.hpp)
+        src/utility/time.inl
+        src/graphics/sprite.cpp
+        src/graphics/sprite.hpp
+        src/physics/dynamic_sprite.cpp
+        src/physics/dynamic_sprite.hpp
+        src/graphics/animated_texture.cpp
+        src/graphics/animated_texture.hpp
+        src/data/scene_importer.cpp
+        src/data/scene_importer.hpp
+        src/data/external/tinyxml2.h
+        src/data/external/tinyxml2.cpp)
 target_link_libraries(topaz OpenGL32 SDL2 SDL2_mixer SDL2_ttf SDL2main assimp)

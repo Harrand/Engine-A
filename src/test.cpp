@@ -9,6 +9,7 @@
 #include "utility/time.hpp"
 #include "graphics/frame_buffer.hpp"
 #include "graphics/animated_texture.hpp"
+#include "data/scene_importer.hpp"
 
 void init();
 
@@ -46,7 +47,11 @@ void init()
     Shader hdr_gui_shader("../../../src/shaders/Gui_HDR");
     Camera camera;
     camera.position = {0, 0, -50};
+
+    SceneImporter test0{"test_scene.xml"};
+    Scene test_scene = test0.retrieve();
     Scene scene;
+    scene.add_object(test_scene.get_static_objects().front().get());
     scene.add_directional_light({{0, 1, 0}, {1, 1, 1}, 2.0f});
 
     Texture red_texture{Bitmap<PixelRGBA>{{PixelRGBA{255, 0, 0, 255}}, 1, 1}};

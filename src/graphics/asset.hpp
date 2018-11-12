@@ -34,11 +34,17 @@ struct AssetBuffer
     template<class AssetType>
     AssetType* find(const std::string& asset_name);
     Mesh* find_mesh(const std::string& mesh_name);
+    const Mesh* peek_mesh(const std::string& mesh_name) const;
     Texture* find_texture(const std::string& texture_name);
+    const Texture* peek_texture(const std::string& texture_name) const;
     NormalMap* find_normal_map(const std::string& normal_map_name);
+    const NormalMap* peek_normal_map(const std::string& normal_map_name) const;
     ParallaxMap* find_parallax_map(const std::string& parallax_map_name);
+    const ParallaxMap* peek_parallax_map(const std::string& parallax_map_name) const;
     DisplacementMap* find_displacement_map(const std::string& displacement_map_name);
+    const DisplacementMap* peek_displacement_map(const std::string& displacement_map_name) const;
     AnimatedTexture* find_animated_texture(const std::string& animation_name);
+    const AnimatedTexture* peek_animated_texture(const std::string& animation_name) const;
     std::unique_ptr<Mesh> take_mesh(const std::string& mesh_name);
     std::unique_ptr<Texture> take_texture(const std::string& texture_name);
     std::unique_ptr<NormalMap> take_normalmap(const std::string& normalmap_name);

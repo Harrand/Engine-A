@@ -59,7 +59,29 @@ Mesh* AssetBuffer::find_mesh(const std::string& mesh_name)
     }
 }
 
+const Mesh* AssetBuffer::peek_mesh(const std::string& mesh_name) const
+{
+    try
+    {
+        return this->meshes.at(mesh_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
 Texture* AssetBuffer::find_texture(const std::string& texture_name)
+{
+    try
+    {
+        return this->textures.at(texture_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
+const Texture* AssetBuffer::peek_texture(const std::string& texture_name) const
 {
     try
     {
@@ -81,7 +103,29 @@ NormalMap* AssetBuffer::find_normal_map(const std::string& normal_map_name)
     }
 }
 
+const NormalMap* AssetBuffer::peek_normal_map(const std::string& normal_map_name) const
+{
+    try
+    {
+        return this->normal_maps.at(normal_map_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
 ParallaxMap* AssetBuffer::find_parallax_map(const std::string& parallax_map_name)
+{
+    try
+    {
+        return this->parallax_maps.at(parallax_map_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
+const ParallaxMap* AssetBuffer::peek_parallax_map(const std::string& parallax_map_name) const
 {
     try
     {
@@ -103,7 +147,29 @@ DisplacementMap* AssetBuffer::find_displacement_map(const std::string& displacem
     }
 }
 
+const DisplacementMap* AssetBuffer::peek_displacement_map(const std::string& displacement_map_name) const
+{
+    try
+    {
+        return this->displacement_maps.at(displacement_map_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
 AnimatedTexture* AssetBuffer::find_animated_texture(const std::string& animation_name)
+{
+    try
+    {
+        return this->animated_textures.at(animation_name).get();
+    }catch(const std::out_of_range& exception)
+    {
+        return nullptr;
+    }
+}
+
+const AnimatedTexture* AssetBuffer::peek_animated_texture(const std::string& animation_name) const
 {
     try
     {

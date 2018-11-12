@@ -1,0 +1,27 @@
+<scene>
+	<object0>
+	<mesh>
+		<name>cube_lq</name>
+		<path>../../../res/runtime/models/cube.obj</path>
+	</mesh>
+	<texture>
+		<name>bricks</name>
+		<path>../../../res/runtime/textures/bricks.jpg</path>
+	</texture>
+	<position>
+		<x>0</x>
+		<y>0</y>
+		<z>0</z>
+	</position>
+	<rotation>
+		<x>0</x>
+		<y>0</y>
+		<z>0</z>
+	</rotation>
+	<scale>
+		<x>10</x>
+		<y>10</y>
+		<z>10</z>
+	</scale>
+	</object0>
+</scene>

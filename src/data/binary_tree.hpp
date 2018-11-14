@@ -23,6 +23,7 @@ public:
     const BinaryTree<T>* get_tree() const;
     std::optional<BinaryTreeNode<T>> get_left_child() const;
     std::optional<BinaryTreeNode<T>> get_right_child() const;
+    std::optional<BinaryTreeNode<T>> get_child(tz::data::binary_tree::ChildType type) const;
     void set_left_child(BinaryTreeNode<T> node);
     void set_right_child(BinaryTreeNode<T> node);
     void set_child(tz::data::binary_tree::ChildType type, BinaryTreeNode<T> node);
@@ -39,7 +40,7 @@ class BinaryTree
 public:
     BinaryTree();
     BinaryTree(BinaryTreeNode<T> root);
-    BinaryTreeNode<T>& emplace_node(T data, BinaryTreeNode<T>* parent, tz::data::binary_tree::ChildType location);
+    void add_node(T data, BinaryTreeNode<T>* parent, tz::data::binary_tree::ChildType location);
 private:
     std::optional<BinaryTreeNode<T>> root;
 };

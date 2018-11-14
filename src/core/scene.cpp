@@ -416,3 +416,48 @@ void Scene::handle_deletions()
         this->erase_sprite(deletion);
     this->sprites_to_delete.clear();
 }
+
+OcclusionCulling::OcclusionCulling(const Scene& scene): scene(scene), bounding_volume(this->scene.get_boundary()), bsp_tree()
+{
+    this->partition_space();
+}
+
+Vector3F OcclusionCulling::get_midpoint() const
+{
+    return (this->bounding_volume.get_minimum() + this->bounding_volume.get_maximum()) / 2.0f;
+}
+
+const StaticObject* OcclusionCulling::get_root_node() const
+{
+    float fmax = std::numeric_limits<float>::max();
+    const StaticObject* closest_to_midpoint = nullptr;
+    Vector3F minimum_displacement{fmax, fmax, fmax};
+    for(const StaticObject& object : this->scene.get_static_objects())
+    {
+        Vector3F current_displacement = object.transform.position - this->get_midpoint();
+        if(minimum_displacement.length() > current_displacement.length())
+        {
+            minimum_displacement = current_displacement;
+            closest_to_midpoint = &object;
+        }
+    }
+    return closest_to_midpoint;
+}
+
+void OcclusionCulling::partition_space()
+{
+    this->bsp_tree.emplace_node(this->get_root_node(), nullptr, tz::data::binary_tree::ChildType::LEFT_CHILD);
+    tz::physics::Axis3D variant_axis = this->scene.get_highest_variance_axis_objects();
+    switch(variant_axis)
+    {
+        case tz::physics::Axis3D::X:
+
+            break;
+        case tz::physics::Axis3D::Y:
+
+            break;
+        case tz::physics::Axis3D::Z:
+
+            break;
+    }
+}

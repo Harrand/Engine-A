@@ -3,6 +3,7 @@
 #include "physics/dynamic_object.hpp"
 #include "physics/dynamic_sprite.hpp"
 #include "physics/physics.hpp"
+#include "data/binary_tree.hpp"
 #include <map>
 
 class Scene
@@ -43,8 +44,10 @@ protected:
     std::vector<std::reference_wrapper<DynamicSprite>> get_mutable_dynamic_sprites();
     std::multimap<float, std::reference_wrapper<DynamicObject>> get_mutable_dynamic_objects_sorted_by_variance_axis();
     std::multimap<float, std::reference_wrapper<DynamicSprite>> get_mutable_dynamic_sprites_sorted_by_variance_axis();
+public:
     tz::physics::Axis3D get_highest_variance_axis_objects() const;
     tz::physics::Axis2D get_highest_variance_axis_sprites() const;
+protected:
     void erase_object(StaticObject* to_delete);
     void erase_sprite(Sprite* to_delete);
     void handle_deletions();
@@ -57,6 +60,20 @@ protected:
     std::vector<PointLight> point_lights;
     std::vector<StaticObject*> objects_to_delete;
     std::vector<Sprite*> sprites_to_delete;
+};
+
+class OcclusionCulling
+{
+public:
+    OcclusionCulling(const Scene& scene);
+    Vector3F get_midpoint() const;
+    const StaticObject* get_root_node() const;
+private:
+    void partition_space();
+
+    const Scene& scene;
+    AABB bounding_volume;
+    BinaryTree<const StaticObject*> bsp_tree;
 };
 
 #include "scene.inl"

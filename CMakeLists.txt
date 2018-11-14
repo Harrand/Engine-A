@@ -105,5 +105,5 @@ add_library(topaz SHARED
         src/data/scene_importer.cpp
         src/data/scene_importer.hpp
         src/data/external/tinyxml2.h
-        src/data/external/tinyxml2.cpp)
+        src/data/external/tinyxml2.cpp src/data/binary_tree.hpp src/data/binary_tree.inl)
 target_link_libraries(topaz OpenGL32 SDL2 SDL2_mixer SDL2_ttf SDL2main assimp)

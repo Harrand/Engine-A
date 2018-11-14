@@ -67,13 +67,7 @@ template<typename T>
 void BinaryTree<T>::add_node(T data, BinaryTreeNode<T>* parent, tz::data::binary_tree::ChildType location)
 {
     if(parent != nullptr)
-    {
         parent->set_child(location, {this, data});
-        return parent->get_child(location);
-    }
     else
-    {
         this->root = {this, data};
-        return this->root;
-    }
 }

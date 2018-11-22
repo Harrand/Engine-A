@@ -33,6 +33,7 @@ namespace tz::physics
 	 * Perfect to be used on the result of a tz::graphics::batch(...) call to bound the entirety of the batch.
 	 */
 	//AABB bound_aabb_batch(const std::vector<SceneObject>& objects);
+	std::pair<AABB, AABB> partition_aabb(const AABB& region, tz::physics::Axis3D axis, float interpolation);
 }
 
 std::ostream& operator<<(std::ostream& stream, const tz::physics::Axis2D& axis);

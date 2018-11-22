@@ -82,6 +82,12 @@ AABB AABB::operator*(const Matrix4x4& rhs) const
     return {(rhs * minimum_homogeneous).xyz(), (rhs * maximum_homogeneous).xyz()};
 }
 
+std::ostream& operator<<(std::ostream& stream, const AABB& box)
+{
+    stream << "{" << box.get_minimum() << ", " << box.get_maximum() << "}";
+    return stream;
+}
+
 BoundingPlane::BoundingPlane(Vector3F normal, float distance): normal(normal), distance(distance){}
 
 BoundingPlane::BoundingPlane(Vector3F a, Vector3F b, Vector3F c): normal((b - a).cross(c - a).normalised()), distance(-this->normal.dot(a)) {}

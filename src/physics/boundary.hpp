@@ -79,6 +79,8 @@ private:
 	Vector3F maximum;
 };
 
+std::ostream& operator<<(std::ostream& stream, const AABB& box);
+
 /**
 * Used to represent planes in 3-dimensional space. Useful for objects such as walls or floors. Also used to comprise a Frustum.
 */

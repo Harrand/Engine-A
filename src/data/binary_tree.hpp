@@ -21,6 +21,7 @@ class BinaryTreeNode
 public:
     BinaryTreeNode(BinaryTree<T>* tree, T payload);
     const BinaryTree<T>* get_tree() const;
+    const T& get_payload() const;
     const BinaryTreeNode<T>* get_left_child() const;
     const BinaryTreeNode<T>* get_right_child() const;
     const BinaryTreeNode<T>* get_child(tz::data::binary_tree::ChildType type) const;
@@ -40,8 +41,10 @@ template<typename T>
 class BinaryTree
 {
 public:
+    using node_type = BinaryTreeNode<T>;
     BinaryTree();
     BinaryTree(BinaryTreeNode<T> root);
+    const BinaryTreeNode<T>* get_root() const;
     BinaryTreeNode<T>& emplace_node(T data, BinaryTreeNode<T>* parent, tz::data::binary_tree::ChildType location);
 private:
     std::optional<BinaryTreeNode<T>> root;

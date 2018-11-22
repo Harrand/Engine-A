@@ -62,18 +62,20 @@ protected:
     std::vector<Sprite*> sprites_to_delete;
 };
 
-class OcclusionCulling
+class BinaryScenePartition
 {
 public:
-    OcclusionCulling(const Scene& scene);
+    using BSPTree = BinaryTree<const StaticObject*>;
+    BinaryScenePartition(const Scene& scene);
     Vector3F get_midpoint() const;
+    const BSPTree& get_tree() const;
     const StaticObject* get_root_node() const;
 private:
     void partition_space();
 
     const Scene& scene;
     AABB bounding_volume;
-    BinaryTree<const StaticObject*> bsp_tree;
+    BSPTree bsp_tree;
 };
 
 #include "scene.inl"

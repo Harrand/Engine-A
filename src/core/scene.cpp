@@ -1,6 +1,9 @@
 #include "core/scene.hpp"
 
-Scene::Scene(const std::initializer_list<StaticObject>& stack_objects, std::vector<std::unique_ptr<StaticObject>> heap_objects): stack_objects(stack_objects), heap_objects(std::move(heap_objects)), stack_sprites{}, heap_sprites{}, directional_lights{}, point_lights{}, objects_to_delete{}, sprites_to_delete{}{}
+Scene::Scene(const std::initializer_list<StaticObject>& stack_objects, std::vector<std::unique_ptr<StaticObject>> heap_objects): stack_objects(stack_objects), heap_objects(std::move(heap_objects)), stack_sprites{}, heap_sprites{}, directional_lights{}, point_lights{}, objects_to_delete{}, sprites_to_delete{}
+{
+    
+}
 
 void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions) const
 {
@@ -417,17 +420,22 @@ void Scene::handle_deletions()
     this->sprites_to_delete.clear();
 }
 
-OcclusionCulling::OcclusionCulling(const Scene& scene): scene(scene), bounding_volume(this->scene.get_boundary()), bsp_tree()
+BinaryScenePartition::BinaryScenePartition(const Scene& scene): scene(scene), bounding_volume(this->scene.get_boundary()), bsp_tree()
 {
     this->partition_space();
 }
 
-Vector3F OcclusionCulling::get_midpoint() const
+Vector3F BinaryScenePartition::get_midpoint() const
 {
     return (this->bounding_volume.get_minimum() + this->bounding_volume.get_maximum()) / 2.0f;
 }
 
-const StaticObject* OcclusionCulling::get_root_node() const
+const BinaryScenePartition::BSPTree& BinaryScenePartition::get_tree() const
+{
+    return this->bsp_tree;
+}
+
+const StaticObject* BinaryScenePartition::get_root_node() const
 {
     float fmax = std::numeric_limits<float>::max();
     const StaticObject* closest_to_midpoint = nullptr;
@@ -444,20 +452,89 @@ const StaticObject* OcclusionCulling::get_root_node() const
     return closest_to_midpoint;
 }
 
-void OcclusionCulling::partition_space()
+void BinaryScenePartition::partition_space()
 {
-    this->bsp_tree.emplace_node(this->get_root_node(), nullptr, tz::data::binary_tree::ChildType::LEFT_CHILD);
+    std::cout << "partitioning space...\n";
+    using Node = decltype(this->bsp_tree)::node_type;
+    using NodeRef = std::reference_wrapper<Node>;
+    NodeRef node = std::ref(this->bsp_tree.emplace_node(this->get_root_node(), nullptr, tz::data::binary_tree::ChildType::LEFT_CHILD));
     tz::physics::Axis3D variant_axis = this->scene.get_highest_variance_axis_objects();
-    switch(variant_axis)
+    using namespace tz::data::binary_tree;
+    for(const StaticObject& object : this->scene.get_static_objects())
     {
-        case tz::physics::Axis3D::X:
-
+        float closest_front_distance = std::numeric_limits<float>::max();
+        float closest_back_distance = std::numeric_limits<float>::max();
+        switch (variant_axis)
+        {
+            case tz::physics::Axis3D::X:
+            {
+                float node_x = node.get().get_payload()->transform.position.x;
+                if (object.transform.position.x > node_x)
+                { // front
+                    float current_distance = object.transform.position.x - node_x;
+                    if (closest_front_distance > current_distance)
+                    {
+                        closest_front_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
+                    }
+                }
+                else
+                { // back
+                    float current_distance = node_x - object.transform.position.x;
+                    if (closest_back_distance > current_distance)
+                    {
+                        closest_back_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
+                    }
+                }
+            }
             break;
-        case tz::physics::Axis3D::Y:
-
+            case tz::physics::Axis3D::Y:
+            {
+                float node_y = node.get().get_payload()->transform.position.y;
+                if (object.transform.position.y > node_y)
+                { // front
+                    float current_distance = object.transform.position.y - node_y;
+                    if (closest_front_distance > current_distance)
+                    {
+                        closest_front_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
+                    }
+                }
+                else
+                { // back
+                    float current_distance = node_y - object.transform.position.y;
+                    if (closest_back_distance > current_distance)
+                    {
+                        closest_back_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
+                    }
+                }
+            }
             break;
-        case tz::physics::Axis3D::Z:
-
-            break;
+            case tz::physics::Axis3D::Z:
+            {
+                float node_z = node.get().get_payload()->transform.position.z;
+                if (object.transform.position.z > node_z)
+                { // front
+                    float current_distance = object.transform.position.z - node_z;
+                    if (closest_front_distance > current_distance)
+                    {
+                        closest_front_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
+                    }
+                }
+                else
+                { // back
+                    float current_distance = node_z - object.transform.position.z;
+                    if (closest_back_distance > current_distance)
+                    {
+                        closest_back_distance = current_distance;
+                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
+                    }
+                }
+            }
+                break;
+        }
     }
 }

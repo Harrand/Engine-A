@@ -8,6 +8,12 @@ const BinaryTree<T>* BinaryTreeNode<T>::get_tree() const
 }
 
 template<typename T>
+const T& BinaryTreeNode<T>::get_payload() const
+{
+    return this->payload;
+}
+
+template<typename T>
 const BinaryTreeNode<T>* BinaryTreeNode<T>::get_left_child() const
 {
     return this->left_child.get();
@@ -81,15 +87,25 @@ template<typename T>
 BinaryTree<T>::BinaryTree(BinaryTreeNode<T> root): root(root){}
 
 template<typename T>
+const BinaryTreeNode<T>* BinaryTree<T>::get_root() const
+{
+    if(this->root.has_value())
+        return &this->root.value();
+    return nullptr;
+}
+
+template<typename T>
 BinaryTreeNode<T>& BinaryTree<T>::emplace_node(T data, BinaryTreeNode<T>* parent, tz::data::binary_tree::ChildType location)
 {
     if(parent != nullptr)
     {
+        std::cout << "node " << parent << " emplacing child at location " << static_cast<int>(location) << "\n";
         return parent->emplace_child(location, this, data);
     }
     else
     {
         this->root = {this, data};
+        std::cout << "the parent is null, so this is now the root. at location" << &this->root << "\n";
         return root.value();
     }
 }

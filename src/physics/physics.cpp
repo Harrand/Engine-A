@@ -29,6 +29,25 @@ AABB tz::physics::bound_aabb(const Mesh& mesh)
 	return {Vector3F(min_x, min_y, min_z), Vector3F(max_x, max_y, max_z)};
 }
 
+std::pair<AABB, AABB> tz::physics::partition_aabb(const AABB& region, tz::physics::Axis3D axis, float interpolation)
+{
+	using namespace tz::physics;
+	Vector3F delta = region.get_maximum() - region.get_minimum();
+	switch(axis)
+	{
+		case Axis3D::X:
+			delta.x *= interpolation;
+			break;
+		case Axis3D::Y:
+			delta.y *= interpolation;
+			break;
+		case Axis3D::Z:
+			delta.z *= interpolation;
+			break;
+	}
+	return {{region.get_minimum(), region.get_minimum() + delta}, {delta, region.get_maximum()}};
+}
+
 std::ostream& operator<<(std::ostream& stream, const tz::physics::Axis2D& axis)
 {
 	using namespace tz::physics;

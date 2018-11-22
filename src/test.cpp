@@ -172,6 +172,17 @@ void init()
     DynamicSprite& ex1 = scene.emplace<DynamicSprite>(1.0f, Vector2F{200, 200}, 0.0f, Vector2F{100.0f, 100.0f}, assets.find_texture("bricks"), Vector2F{10.0f, 0.0f});
     ex1.add_force({0.0f, 10.0f});
 
+    BinaryScenePartition bsp{scene};
+    const auto& tree = bsp.get_tree();
+    const auto* root = tree.get_root();
+    std::cout << "is the root node " << root << " null? " << std::boolalpha << (root == nullptr) << "\n";
+    std::cout << "is the root's left child node " << root->get_left_child() << " null? " << std::boolalpha << (root->get_left_child() == nullptr) << "\n";
+    std::cout << "is the root's right child node " << root->get_right_child() << " null? " << std::boolalpha << (root->get_right_child() == nullptr) << "\n";
+
+    AABB test_aabb{{}, {100, 100, 100}};
+    auto [a, b] = tz::physics::partition_aabb(test_aabb, tz::physics::Axis3D::X, 0.5f);
+    std::cout << "test region " << test_aabb << " partitions to a = " << a << ", and b = " << b << "\n";
+
     long long int time = tz::utility::time::now();
     Timer second_timer, tick_timer;
     TimeProfiler profiler;

@@ -19,6 +19,11 @@ namespace tz::ea::importer
     constexpr char position_element_name[] = "position";
     constexpr char rotation_element_name[] = "rotation";
     constexpr char scale_element_name[] = "scale";
+    constexpr char node_element_name[] = "node";
+    constexpr char node_set_element_name[] = "node_set";
+    constexpr char node_identifier_name[] = "node_";
+    constexpr char potentially_visible_set_element_name[] = "pvs";
+    std::unordered_set<std::string> read_nodes(const tinyxml2::XMLElement* scene_element);
 }
 
 struct TextBasedObject
@@ -28,7 +33,15 @@ struct TextBasedObject
     std::string mesh_link;
     std::string texture_name;
     std::string texture_link;
+    std::string node_name;
     Transform transform;
+};
+
+struct TextBasedNode
+{
+    TextBasedNode(const std::string& name, const tinyxml2::XMLElement* node_element);
+    std::string name;
+    std::unordered_set<std::string> potentially_visible_set;
 };
 
 class SceneImporter
@@ -41,6 +54,7 @@ private:
     tinyxml2::XMLDocument import_file;
     AssetBuffer assets;
     std::vector<TextBasedObject> imported_objects;
+    std::vector<TextBasedNode> imported_nodes;
 };
 
 

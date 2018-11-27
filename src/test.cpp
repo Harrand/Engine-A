@@ -46,12 +46,12 @@ void init()
     Shader gui_shader("../../../src/shaders/Gui");
     Shader hdr_gui_shader("../../../src/shaders/Gui_HDR");
     Camera camera;
-    camera.position = {0, 0, -50};
+    camera.position = {0, 0, 0};
 
     SceneImporter test0{"test_scene.xml"};
-    Scene test_scene = test0.retrieve();
-    Scene scene;
-    scene.add_object(test_scene.get_static_objects().front().get());
+    Scene scene = test0.retrieve();
+    //std::cout << "test scene size = " << test_scene.get_number_of_elements() << ", num objects in node A = " << test_scene.get_static_objects_in_node("A").size() << "\n";
+    //Scene scene;
     scene.add_directional_light({{0, 1, 0}, {1, 1, 1}, 2.0f});
 
     Texture red_texture{Bitmap<PixelRGBA>{{PixelRGBA{255, 0, 0, 255}}, 1, 1}};
@@ -129,6 +129,7 @@ void init()
                                  scene.emplace_object(Transform{camera.position, {}, {10, 10, 10}}, asset1);
                                  tz::audio::play_async(AudioClip{"../../../res/runtime/music/tulips.wav"});
                              });
+    /*
     std::vector<StaticObject> floor_objects;
     std::vector<DynamicObject> falling_objects;
     constexpr int floor_size = 1500;
@@ -154,6 +155,8 @@ void init()
     }
     scene.emplace<InstancedStaticObject>(floor_objects);
     //scene.emplace<InstancedDynamicObject>(falling_objects);
+     */
+    /*
     scene.emplace<StaticObject>(Transform{{0, 0, 0}, {}, {15, 15, 15}}, wooden_sphere);
     scene.emplace<StaticObject>(Transform{{100, 0, 0}, {}, {200, 200, 200}}, wooden_cylinder);
     scene.emplace<StaticObject>(Transform{{0, -50, -70}, {}, {20, 20, 20}}, asset1);
@@ -166,12 +169,14 @@ void init()
     scene.emplace<DynamicObject>(1.0f, Transform{{20, 100, 0}, {}, {50, 50, 50}}, wooden_cylinder);
 
     scene.emplace<DynamicObject>(1.0f, Transform{{40, 100, 0}, {}, {50, 50, 50}}, wooden_cylinder);
+     */
 
 
-    DynamicSprite& example_sprite = scene.emplace<DynamicSprite>(1.0f, Vector2F{}, 0.0f, Vector2F{100.0f, 100.0f}, assets.find_texture("bricks"));
-    DynamicSprite& ex1 = scene.emplace<DynamicSprite>(1.0f, Vector2F{200, 200}, 0.0f, Vector2F{100.0f, 100.0f}, assets.find_texture("bricks"), Vector2F{10.0f, 0.0f});
-    ex1.add_force({0.0f, 10.0f});
+    //DynamicSprite& example_sprite = scene.emplace<DynamicSprite>(1.0f, Vector2F{}, 0.0f, Vector2F{100.0f, 100.0f}, assets.find_texture("bricks"));
+    //DynamicSprite& ex1 = scene.emplace<DynamicSprite>(1.0f, Vector2F{200, 200}, 0.0f, Vector2F{100.0f, 100.0f}, assets.find_texture("bricks"), Vector2F{10.0f, 0.0f});
+    //ex1.add_force({0.0f, 10.0f});
 
+    /*
     BinaryScenePartition bsp{scene};
     const auto& tree = bsp.get_tree();
     const auto* root = tree.get_root();
@@ -182,6 +187,7 @@ void init()
     AABB test_aabb{{}, {100, 100, 100}};
     auto [a, b] = tz::physics::partition_aabb(test_aabb, tz::physics::Axis3D::X, 0.5f);
     std::cout << "test region " << test_aabb << " partitions to a = " << a << ", and b = " << b << "\n";
+     */
 
     long long int time = tz::utility::time::now();
     Timer second_timer, tick_timer;
@@ -294,6 +300,7 @@ void init()
             camera.position += camera.left() * delta_time * speed;
         if(key_listener.is_key_pressed("D"))
             camera.position += camera.right() * delta_time * speed;
+        /*
         if(key_listener.is_key_pressed("Up"))
             example_sprite.position_screenspace.y += 3;
         if(key_listener.is_key_pressed("Down"))
@@ -302,5 +309,6 @@ void init()
             example_sprite.position_screenspace.x -= 3;
         if(key_listener.is_key_pressed("Right"))
             example_sprite.position_screenspace.x += 3;
+            */
     }
 }

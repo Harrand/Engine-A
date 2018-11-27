@@ -1,6 +1,6 @@
 #include "graphics/static_object.hpp"
 
-StaticObject::StaticObject(Transform transform, Asset asset): transform(transform), asset(asset){}
+StaticObject::StaticObject(Transform transform, Asset asset, std::string node_name): transform(transform), asset(asset), node_name(node_name){}
 
 const Asset& StaticObject::get_asset() const
 {
@@ -47,7 +47,12 @@ void StaticObject::render(Shader& render_shader, const Camera& camera, const Vec
     this->asset.mesh->render(render_shader.has_tessellation_control_shader());
 }
 
-bool  StaticObject::operator==(const StaticObject &rhs) const
+const std::string& StaticObject::get_node_name() const
+{
+    return this->node_name;
+}
+
+bool StaticObject::operator==(const StaticObject &rhs) const
 {
     return this->transform == rhs.transform && this->asset == rhs.asset;
 }

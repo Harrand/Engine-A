@@ -8,6 +8,29 @@ Scene::Scene(const std::initializer_list<StaticObject>& stack_objects, std::vect
 void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions) const
 {
     Frustum camera_frustum(camera, viewport_dimensions.x / viewport_dimensions.y);
+    auto is_occluded = [&](const StaticObject& object)->bool
+    {
+        // get the node our camera is in (could be none)
+        std::cout << "getting optnode...\n";
+        auto optnode = this->get_node_containing_position(camera.position);
+        std::cout << "got optnode. is the camera in a valid node? " << std::boolalpha << optnode.has_value() << "\n";
+        // if its in no particular node, be conservative and draw everything.
+        if(!optnode.has_value())
+            return false;
+        // if there is a node, check the pvs of nodes. if the object is in one of these nodes, then draw.
+        // if the object is NOT in the PVS, then we don't have to draw it.
+        const std::string camera_node = optnode.value();
+        const std::string& object_node = object.get_node_name();
+        std::cout << "camera is in node " << camera_node << ", object is in node " << object_node << "\n";
+        auto object_pvs = this->potentially_visible_sets.at(object_node);
+        if(object_pvs.find(camera_node) == object_pvs.end())
+        {
+            // camera is NOT in one of the PVS
+            std::cout << "OCCLUSION CULLED!\n";
+            return true;
+        }
+        return false;
+    };
     auto render_if_visible = [&](const StaticObject& object){AABB object_box = tz::physics::bound_aabb(*(object.get_asset().mesh)); if(camera_frustum.contains(object_box * object.transform.model()) || tz::graphics::is_instanced(object.get_asset().mesh)) object.render(*render_shader, camera, viewport_dimensions);};
     if(render_shader != nullptr)
     {
@@ -15,7 +38,8 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
         {
             if (std::find(this->objects_to_delete.begin(), this->objects_to_delete.end(), &static_object.get()) != this->objects_to_delete.end())
                 continue;
-            render_if_visible(static_object.get());
+            if(!is_occluded(static_object.get()))
+                render_if_visible(static_object.get());
         }
     }
     if(sprite_shader != nullptr)
@@ -106,6 +130,15 @@ std::vector<std::reference_wrapper<const StaticObject>> Scene::get_static_object
     for(const std::unique_ptr<StaticObject>& object_ptr : this->heap_objects)
         object_crefs.push_back(std::cref(*object_ptr));
     return object_crefs;
+}
+
+std::vector<std::reference_wrapper<const StaticObject>> Scene::get_static_objects_in_node(const std::string& node_name) const
+{
+    std::vector<std::reference_wrapper<const StaticObject>> refs;
+    for(std::reference_wrapper<const StaticObject>& ref : this->get_static_objects())
+        if(ref.get().get_node_name() == node_name)
+            refs.push_back(ref);
+    return refs;
 }
 
 std::vector<std::reference_wrapper<const Sprite>> Scene::get_sprites() const
@@ -209,6 +242,17 @@ void Scene::add_point_light(PointLight light)
 {
     this->point_lights.push_back(std::move(light));
 }
+
+void Scene::set_potentially_visible_set(const std::string& node_name, std::unordered_set<std::string> pvs)
+{
+    this->potentially_visible_sets[node_name] = std::move(pvs);
+}
+
+void Scene::add_to_potentially_visible_set(const std::string& node_name, std::string potentially_visible_node_name)
+{
+    this->potentially_visible_sets[node_name].insert(potentially_visible_node_name);
+}
+
 
 std::vector<std::reference_wrapper<const DynamicObject>> Scene::get_dynamic_objects() const
 {
@@ -333,6 +377,56 @@ std::multimap<float, std::reference_wrapper<DynamicSprite>> Scene::get_mutable_d
         }
     }
     return sorted_dyn_sprites;
+}
+
+std::unordered_set<std::string> Scene::get_nodes() const
+{
+    std::unordered_set<std::string> nodes;
+    for(const StaticObject& object : this->get_static_objects())
+        nodes.insert(object.get_node_name());
+    return nodes;
+}
+
+std::unordered_map<std::string, std::vector<std::reference_wrapper<const StaticObject>>> Scene::get_objects_in_nodes() const
+{
+    std::unordered_map<std::string, std::vector<std::reference_wrapper<const StaticObject>>> sorted_objects;
+    for(std::string node : this->get_nodes())
+        sorted_objects[node] = this->get_static_objects_in_node(node);
+    return sorted_objects;
+}
+
+std::optional<AABB> Scene::get_node_bounding_box(const std::string& node) const
+{
+    auto objects = this->get_objects_in_nodes();
+    const auto const_iter = objects.find(node);
+    if(const_iter == objects.end())
+        return std::nullopt;
+    else
+    {
+        auto node_bound_objects = const_iter->second;
+        if(node_bound_objects.empty())
+            return std::nullopt;
+        const StaticObject& front = node_bound_objects.front().get();
+        AABB box = front.get_boundary().value();
+        for(const StaticObject& object : node_bound_objects)
+            box.expand_to(object.get_boundary().value());
+        return box;
+    }
+}
+
+std::optional<std::string> Scene::get_node_containing_position(const Vector3F& position) const
+{
+    for(const std::string& node : this->get_nodes())
+    {
+        auto optbox = this->get_node_bounding_box(node);
+        if(optbox.has_value())
+        {
+            const AABB box = optbox.value();
+            if(box.intersects(position))
+                return node;
+        }
+    }
+    return std::nullopt;
 }
 
 tz::physics::Axis3D Scene::get_highest_variance_axis_objects() const

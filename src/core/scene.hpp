@@ -17,6 +17,7 @@ public:
     std::size_t get_number_of_sprites() const;
     std::size_t get_number_of_elements() const;
     std::vector<std::reference_wrapper<const StaticObject>> get_static_objects() const;
+    std::vector<std::reference_wrapper<const StaticObject>> get_static_objects_in_node(const std::string& node_name) const;
     std::vector<std::reference_wrapper<const Sprite>> get_sprites() const;
     AABB get_boundary() const;
     template<class Element, typename... Args>
@@ -35,6 +36,8 @@ public:
     std::optional<PointLight> get_point_light(std::size_t light_id) const;
     void set_point_light(std::size_t light_id, PointLight light);
     void add_point_light(PointLight light);
+    void set_potentially_visible_set(const std::string& node_name, std::unordered_set<std::string> pvs);
+    void add_to_potentially_visible_set(const std::string& node_name, std::string potentially_visible_node_name);
 protected:
     std::vector<std::reference_wrapper<const DynamicObject>> get_dynamic_objects() const;
     std::vector<std::reference_wrapper<StaticObject>> get_mutable_static_objects();
@@ -44,6 +47,10 @@ protected:
     std::vector<std::reference_wrapper<DynamicSprite>> get_mutable_dynamic_sprites();
     std::multimap<float, std::reference_wrapper<DynamicObject>> get_mutable_dynamic_objects_sorted_by_variance_axis();
     std::multimap<float, std::reference_wrapper<DynamicSprite>> get_mutable_dynamic_sprites_sorted_by_variance_axis();
+    std::unordered_set<std::string> get_nodes() const;
+    std::unordered_map<std::string, std::vector<std::reference_wrapper<const StaticObject>>> get_objects_in_nodes() const;
+    std::optional<AABB> get_node_bounding_box(const std::string& node) const;
+    std::optional<std::string> get_node_containing_position(const Vector3F& position) const;
 public:
     tz::physics::Axis3D get_highest_variance_axis_objects() const;
     tz::physics::Axis2D get_highest_variance_axis_sprites() const;
@@ -60,6 +67,7 @@ protected:
     std::vector<PointLight> point_lights;
     std::vector<StaticObject*> objects_to_delete;
     std::vector<Sprite*> sprites_to_delete;
+    std::unordered_map<std::string, std::unordered_set<std::string>> potentially_visible_sets;
 };
 
 class BinaryScenePartition

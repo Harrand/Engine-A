@@ -14,10 +14,11 @@
 class StaticObject
 {
 public:
-    StaticObject(Transform transform, Asset asset);
+    StaticObject(Transform transform, Asset asset, std::string node_name = "");
     const Asset& get_asset() const;
     virtual std::optional<AABB> get_boundary() const;
     virtual void render(Shader& render_shader, const Camera& camera, const Vector2I& viewport_dimensions) const;
+    const std::string& get_node_name() const;
 
     Transform transform;
 
@@ -25,6 +26,7 @@ public:
     friend class InstancedStaticObject;
 protected:
     Asset asset;
+    std::string node_name;
 };
 
 class InstancedStaticObject : public StaticObject

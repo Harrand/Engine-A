@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.9)
-project(topaz VERSION 0.7.0 DESCRIPTION "Cross-Platform Multimedia Engine")
+project(engine_a VERSION 0.7.0 DESCRIPTION "Cross-Platform Multimedia Engine")
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_STANDARD 17)
 set(TZ_COMPILE_FLAGS "-Wall -Wextra -pedantic-errors -O3")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TZ_COMPILE_FLAGS}")
-include_directories(topaz ${PROJECT_SOURCE_DIR}/inc)
-include_directories(topaz ${PROJECT_SOURCE_DIR}/src)
+include_directories(engine_a ${PROJECT_SOURCE_DIR}/inc)
+include_directories(engine_a ${PROJECT_SOURCE_DIR}/src)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
-add_library(topaz SHARED
+add_library(engine_a SHARED
         src/audio/audio.cpp
         src/audio/audio.hpp
         src/audio/audio.inl
@@ -105,5 +105,5 @@ add_library(topaz SHARED
         src/data/scene_importer.cpp
         src/data/scene_importer.hpp
         src/data/external/tinyxml2.h
-        src/data/external/tinyxml2.cpp src/data/binary_tree.hpp src/data/binary_tree.inl)
-target_link_libraries(topaz OpenGL32 SDL2 SDL2_mixer SDL2_ttf SDL2main assimp)
+        src/data/external/tinyxml2.cpp)
+target_link_libraries(engine_a OpenGL32 SDL2 SDL2_mixer SDL2_ttf SDL2main assimp)

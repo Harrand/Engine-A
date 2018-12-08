@@ -16,6 +16,6 @@ call cpl_test.bat
 cd "%scriptdir%"
 cd cmake-build-debug
 echo Compilation complete, moving DLL over.
-xcopy /Y libtopaz.dll "%lnkdir%"
+xcopy /Y libengine_a.dll "%lnkdir%"
 goto run_test
 :eof

@@ -11,9 +11,7 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
     auto is_occluded = [&](const StaticObject& object)->bool
     {
         // get the node our camera is in (could be none)
-        std::cout << "getting optnode...\n";
         auto optnode = this->get_node_containing_position(camera.position);
-        std::cout << "got optnode. is the camera in a valid node? " << std::boolalpha << optnode.has_value() << "\n";
         // if its in no particular node, be conservative and draw everything.
         if(!optnode.has_value())
             return false;
@@ -21,12 +19,10 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
         // if the object is NOT in the PVS, then we don't have to draw it.
         const std::string camera_node = optnode.value();
         const std::string& object_node = object.get_node_name();
-        std::cout << "camera is in node " << camera_node << ", object is in node " << object_node << "\n";
         auto object_pvs = this->potentially_visible_sets.at(object_node);
         if(object_pvs.find(camera_node) == object_pvs.end())
         {
             // camera is NOT in one of the PVS
-            std::cout << "OCCLUSION CULLED!\n";
             return true;
         }
         return false;
@@ -512,123 +508,4 @@ void Scene::handle_deletions()
     for(Sprite* deletion : this->sprites_to_delete)
         this->erase_sprite(deletion);
     this->sprites_to_delete.clear();
-}
-
-BinaryScenePartition::BinaryScenePartition(const Scene& scene): scene(scene), bounding_volume(this->scene.get_boundary()), bsp_tree()
-{
-    this->partition_space();
-}
-
-Vector3F BinaryScenePartition::get_midpoint() const
-{
-    return (this->bounding_volume.get_minimum() + this->bounding_volume.get_maximum()) / 2.0f;
-}
-
-const BinaryScenePartition::BSPTree& BinaryScenePartition::get_tree() const
-{
-    return this->bsp_tree;
-}
-
-const StaticObject* BinaryScenePartition::get_root_node() const
-{
-    float fmax = std::numeric_limits<float>::max();
-    const StaticObject* closest_to_midpoint = nullptr;
-    Vector3F minimum_displacement{fmax, fmax, fmax};
-    for(const StaticObject& object : this->scene.get_static_objects())
-    {
-        Vector3F current_displacement = object.transform.position - this->get_midpoint();
-        if(minimum_displacement.length() > current_displacement.length())
-        {
-            minimum_displacement = current_displacement;
-            closest_to_midpoint = &object;
-        }
-    }
-    return closest_to_midpoint;
-}
-
-void BinaryScenePartition::partition_space()
-{
-    std::cout << "partitioning space...\n";
-    using Node = decltype(this->bsp_tree)::node_type;
-    using NodeRef = std::reference_wrapper<Node>;
-    NodeRef node = std::ref(this->bsp_tree.emplace_node(this->get_root_node(), nullptr, tz::data::binary_tree::ChildType::LEFT_CHILD));
-    tz::physics::Axis3D variant_axis = this->scene.get_highest_variance_axis_objects();
-    using namespace tz::data::binary_tree;
-    for(const StaticObject& object : this->scene.get_static_objects())
-    {
-        float closest_front_distance = std::numeric_limits<float>::max();
-        float closest_back_distance = std::numeric_limits<float>::max();
-        switch (variant_axis)
-        {
-            case tz::physics::Axis3D::X:
-            {
-                float node_x = node.get().get_payload()->transform.position.x;
-                if (object.transform.position.x > node_x)
-                { // front
-                    float current_distance = object.transform.position.x - node_x;
-                    if (closest_front_distance > current_distance)
-                    {
-                        closest_front_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
-                    }
-                }
-                else
-                { // back
-                    float current_distance = node_x - object.transform.position.x;
-                    if (closest_back_distance > current_distance)
-                    {
-                        closest_back_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
-                    }
-                }
-            }
-            break;
-            case tz::physics::Axis3D::Y:
-            {
-                float node_y = node.get().get_payload()->transform.position.y;
-                if (object.transform.position.y > node_y)
-                { // front
-                    float current_distance = object.transform.position.y - node_y;
-                    if (closest_front_distance > current_distance)
-                    {
-                        closest_front_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
-                    }
-                }
-                else
-                { // back
-                    float current_distance = node_y - object.transform.position.y;
-                    if (closest_back_distance > current_distance)
-                    {
-                        closest_back_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
-                    }
-                }
-            }
-            break;
-            case tz::physics::Axis3D::Z:
-            {
-                float node_z = node.get().get_payload()->transform.position.z;
-                if (object.transform.position.z > node_z)
-                { // front
-                    float current_distance = object.transform.position.z - node_z;
-                    if (closest_front_distance > current_distance)
-                    {
-                        closest_front_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::RIGHT_CHILD));
-                    }
-                }
-                else
-                { // back
-                    float current_distance = node_z - object.transform.position.z;
-                    if (closest_back_distance > current_distance)
-                    {
-                        closest_back_distance = current_distance;
-                        node = std::ref(this->bsp_tree.emplace_node(&object, &node.get(), ChildType::LEFT_CHILD));
-                    }
-                }
-            }
-                break;
-        }
-    }
 }

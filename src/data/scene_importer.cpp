@@ -59,31 +59,16 @@ Scene SceneImporter::retrieve()
     Scene scene;
     for(const TextBasedObject& object : this->imported_objects)
     {
-        std::cout << "begin loop.\n";
-        std::cout << "names: " << object.mesh_name << ", " << object.texture_name << "\n";
-        std::cout << "links: " << object.mesh_link << ", " << object.texture_link << "\n";
-        std::cout << "node id: " << object.node_name << "\n";
         if(this->assets.find_mesh(object.mesh_name) == nullptr)
         {
-            std::cout << "emplacing new mesh...\n";
             this->assets.emplace_mesh(object.mesh_name, object.mesh_link);
-            std::cout << "emplaced.\n";
         }
         if(this->assets.find_texture(object.texture_name) == nullptr)
             this->assets.emplace_texture(object.texture_name, object.texture_link);
-        std::cout << "time to emplace the object.\n";
         scene.emplace_object(object.transform, Asset{this->assets.find_mesh(object.mesh_name), this->assets.find_texture(object.texture_name)}, object.node_name);
-        std::cout << "end loop.\n";
     }
     for(const TextBasedNode& node : this->imported_nodes)
-    {
-        std::cout << "getting pvs of node...\n";
-        std::cout << "pvs of '" << node.name << "' = {";
-        for(const auto& name : node.potentially_visible_set)
-            std::cout << name << ", ";
-        std::cout << "}\n";
         scene.set_potentially_visible_set(node.name, node.potentially_visible_set);
-    }
     return scene;
 }
 
@@ -98,7 +83,6 @@ void SceneImporter::import()
     do
     {
         object_element = scene_element->FirstChildElement(get_current_name().c_str());
-        std::cout << "object element = " << object_element << "\n";
         if(object_element != nullptr)
             this->imported_objects.emplace_back(object_element);
         child_counter++;

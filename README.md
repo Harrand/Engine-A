@@ -1,7 +1,7 @@
-# Topaz
+# Engine A
 ## About
 
-Topaz is a multimedia engine written in C++ to be used as a cross-platform abstraction to be used to create applications, games or other programs which demand a modern-C++ mixture of performance and abstraction. Topaz has been in development since it started as an extended project for a sixth-form informal EPQ in 2015.
+Engine A is built upon the [Topaz engine](https://github.com/Harrand/Topaz). Engine A is intended to act as similarly to the Unity engine as realistically possible. Specifically, commit hash [6fdf6d4ca620087aa06350a926a92c12bc6a580d](https://github.com/Harrand/Topaz/tree/6fdf6d4ca620087aa06350a926a92c12bc6a580d).
 
 ### Built With
 
@@ -13,19 +13,3 @@ Topaz is a multimedia engine written in C++ to be used as a cross-platform abstr
 ### License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Installation
-### Prerequisites
-
-* OpenGL v4.3 or later. See your graphics card information to verify that you support this.
-* SDL2-supported hardware. See [their wiki on installation](http://wiki.libsdl.org/Installation) to verify this.
-### Compilation
-
-If you have CMake:
-
-See `CMakeLists.txt` in the root directory.
-
-If you do not, see the windows batch files (.bat) included in the root folder to aid with compilation. If you are not on Windows nor currently have CMake, then you must [install CMake](https://cmake.org/) to use this library.
-
-## Documentation
-See the [wiki](https://github.com/Harrand/Topaz/wiki).

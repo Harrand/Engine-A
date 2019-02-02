@@ -36,6 +36,9 @@ void init()
     MouseListener mouse_listener(wnd);
 
     Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
 
@@ -47,8 +50,17 @@ void init()
     Camera camera;
     camera.position = {0, 0, 0};
 
-    SceneImporter test0{"test_scene.xml"};
-    Scene scene = test0.retrieve();
+    SceneImporter importer1{"scene1.xml"};
+    SceneImporter importer2{"scene2.xml"};
+    SceneImporter importer3{"scene3.xml"};
+    Scene scene1 = importer1.retrieve();
+    Scene scene2 = importer2.retrieve();
+    Scene scene3 = importer3.retrieve();
+    Scene* scene = &scene1;
+
+    scene1_button.set_callback([&scene, &scene1](){scene = &scene1;});
+    scene2_button.set_callback([&scene, &scene2](){scene = &scene2;});
+    scene3_button.set_callback([&scene, &scene3](){scene = &scene3;});
 
     AssetBuffer assets;
     assets.emplace<Mesh>("cube_lq", "../../../res/runtime/models/cube.obj");
@@ -94,12 +106,12 @@ void init()
         wnd.clear();
         if(wireframe)
             tz::graphics::enable_wireframe_render(true);
-        scene.render(&render_shader, &gui_shader, camera, {wnd.get_width(), wnd.get_height()});
+        scene->render(&render_shader, &gui_shader, camera, {wnd.get_width(), wnd.get_height()});
         constexpr int tps = 120;
         constexpr float tick_delta = 1000.0f / tps;
         if(tick_timer.millis_passed(tick_delta))
         {
-            scene.update(tick_delta / 1000.0f);
+            scene->update(tick_delta / 1000.0f);
             tick_timer.reload();
         }
         if(wireframe)

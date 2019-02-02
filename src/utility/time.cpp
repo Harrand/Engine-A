@@ -16,7 +16,7 @@ void Timer::reload()
 {
 	// Assign both to the number of millis past since Epoch, so that the range is zero.
 	this->before = tz::utility::time::now();
-	this->after = after;
+	this->after = this->before;
 }
 
 float Timer::get_range() const
@@ -33,13 +33,13 @@ TimeProfiler::TimeProfiler(): tk(Timer()){}
 
 void TimeProfiler::begin_frame()
 {
-	this->tk.update();
+	this->tk.reload();
 }
 
 void TimeProfiler::end_frame()
 {
+	this->tk.update();
 	this->deltas.push_back(this->tk.get_range());
-	this->tk.reload();
 }
 
 void TimeProfiler::reset()

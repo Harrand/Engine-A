@@ -27,7 +27,7 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
         }
         return false;
     };
-    auto render_if_visible = [&](const StaticObject& object){AABB object_box = tz::physics::bound_aabb(*(object.get_asset().mesh)); if(camera_frustum.contains(object_box * object.transform.model()) || tz::graphics::is_instanced(object.get_asset().mesh)) object.render(*render_shader, camera, viewport_dimensions);};
+    //auto render_if_visible = [&](const StaticObject& object){AABB object_box = tz::physics::bound_aabb(*(object.get_asset().mesh)); if(camera_frustum.contains(object_box * object.transform.model()) || tz::graphics::is_instanced(object.get_asset().mesh)) object.render(*render_shader, camera, viewport_dimensions);};
     if(render_shader != nullptr)
     {
         for (const auto &static_object : this->get_static_objects())
@@ -35,7 +35,7 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
             if (std::find(this->objects_to_delete.begin(), this->objects_to_delete.end(), &static_object.get()) != this->objects_to_delete.end())
                 continue;
             if(!is_occluded(static_object.get()))
-                render_if_visible(static_object.get());
+                static_object.get().render(*render_shader, camera, viewport_dimensions);
         }
     }
     if(sprite_shader != nullptr)
@@ -405,7 +405,9 @@ std::optional<AABB> Scene::get_node_bounding_box(const std::string& node) const
         const StaticObject& front = node_bound_objects.front().get();
         AABB box = front.get_boundary().value();
         for(const StaticObject& object : node_bound_objects)
-            box.expand_to(object.get_boundary().value());
+        {
+            box = box.expand_to(object.get_boundary().value());
+        }
         return box;
     }
 }

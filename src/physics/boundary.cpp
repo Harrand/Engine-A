@@ -24,7 +24,10 @@ bool BoundingSphere::intersects(const BoundingSphere& rhs) const
 	return centre_distance < radius_distance;
 }
 
-AABB::AABB(Vector3F minimum, Vector3F maximum): minimum(minimum), maximum(maximum){}
+AABB::AABB(Vector3F minimum, Vector3F maximum): minimum(minimum), maximum(maximum)
+{
+    this->validate();
+}
 
 const Vector3F& AABB::get_minimum() const
 {
@@ -59,7 +62,10 @@ bool AABB::intersects(const Vector3F& point) const
 	bool meet_x = this->minimum.x <= point.x && this->maximum.x >= point.x;
 	bool meet_y = this->minimum.y <= point.y && this->maximum.y >= point.y;
 	bool meet_z = this->minimum.z <= point.z && this->maximum.z >= point.z;
-	return meet_x && meet_y && meet_z;
+    bool meet_x_inverse = this->maximum.x <= point.x && this->minimum.x >= point.x;
+    bool meet_y_inverse = this->maximum.y <= point.y && this->minimum.y >= point.y;
+    bool meet_z_inverse = this->maximum.z <= point.z && this->minimum.z >= point.z;
+	return (meet_x && meet_y && meet_z) || (meet_x_inverse && meet_y_inverse && meet_z_inverse);
 }
 
 AABB AABB::expand_to(const AABB &other) const
@@ -79,7 +85,19 @@ AABB AABB::operator*(const Matrix4x4& rhs) const
 {
     Vector4F minimum_homogeneous = {this->minimum, 1.0f};
     Vector4F maximum_homogeneous = {this->maximum, 1.0f};
-    return {(rhs * minimum_homogeneous).xyz(), (rhs * maximum_homogeneous).xyz()};
+    AABB box{(rhs * minimum_homogeneous).xyz(), (rhs * maximum_homogeneous).xyz()};
+    box.validate();
+    return box;
+}
+
+void AABB::validate()
+{
+    if(minimum.x > maximum.x)
+        std::swap(minimum.x, maximum.x);
+    if(minimum.y > maximum.y)
+        std::swap(minimum.y, maximum.y);
+    if(minimum.z > maximum.z)
+        std::swap(minimum.z, maximum.z);
 }
 
 std::ostream& operator<<(std::ostream& stream, const AABB& box)

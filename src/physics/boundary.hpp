@@ -73,6 +73,8 @@ public:
 	AABB expand_to(const AABB& other) const;
     AABB operator*(const Matrix4x4& rhs) const;
 private:
+	/// Ensure that minimums are minimum and maximums are maximum.
+	void validate();
 	/// Minimum 3-dimensional position of the AABB, in world-space.
 	Vector3F minimum;
 	/// Maximum 3-dimensional positon of the AABB, in world-space.

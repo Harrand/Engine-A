@@ -24,13 +24,13 @@ int main()
 void init()
 {
     Window wnd("Engine A Development Window", 0, 30, 1920, 1080);
-    wnd.set_fullscreen(Window::FullscreenType::DESKTOP_MODE);
     wnd.set_swap_interval_type(Window::SwapIntervalType::IMMEDIATE_UPDATES);
 
     // During init, enable debug output
     Font font("../../../res/runtime/fonts/Comfortaa-Regular.ttf", 36);
     Label& label = wnd.emplace_child<Label>(Vector2I{100, 50}, font, Vector3F{0.0f, 0.3f, 0.0f}, " ");
     ProgressBar& progress = wnd.emplace_child<ProgressBar>(Vector2I{0, 50}, Vector2I{100, 50}, ProgressBarTheme{{{0.5f, {0.0f, 0.0f, 1.0f}}, {1.0f, {1.0f, 0.0f, 1.0f}}}, {0.1f, 0.1f, 0.1f}}, 0.5f);
+    Label& node_label = wnd.emplace_child<Label>(Vector2I{0, 300}, font, Vector3F{0.3f, 0.1f, 0.0f}, " ");
 
     KeyListener key_listener(wnd);
     MouseListener mouse_listener(wnd);
@@ -98,6 +98,17 @@ void init()
             label.set_text(to_string(profiler.get_delta_average()) + " ms (" + to_string(profiler.get_fps()) + " fps)");
             second_timer.reload();
             profiler.reset();
+            node_label.set_text(scene->get_node_containing_position(camera.position).value_or("No Node"));
+            for(const std::string& node : scene->get_nodes())
+            {
+                std::cout << "node " << node << ": ";
+                auto optbox = scene->get_node_bounding_box(node);
+                if(optbox.has_value())
+                    std::cout << "{" << optbox.value().get_minimum() << ", " << optbox.value().get_maximum() << "}\n";
+                else
+                    std::cout << "NO_BOX\n";
+            }
+            std::cout << "camera position = " << camera.position << "\n";
         }
 
         long long int delta_time = tz::utility::time::now() - time;

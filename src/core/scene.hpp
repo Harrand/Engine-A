@@ -222,6 +222,7 @@ protected:
      * @return - Container of non-constant-references to all 2D DynamicSprites in the Scene
      */
     std::multimap<float, std::reference_wrapper<DynamicSprite>> get_mutable_dynamic_sprites_sorted_by_variance_axis();
+public: //TEMP
     // TODO: Document
     std::unordered_set<std::string> get_nodes() const;
     // TODO: Document

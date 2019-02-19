@@ -123,16 +123,6 @@ void init()
             second_timer.reload();
             profiler.reset();
             node_label.set_text(scene->get_node_containing_position(camera.position).value_or("No Node"));
-            for(const std::string& node : scene->get_nodes())
-            {
-                std::cout << "node " << node << ": ";
-                auto optbox = scene->get_node_bounding_box(node);
-                if(optbox.has_value())
-                    std::cout << "{" << optbox.value().get_minimum() << ", " << optbox.value().get_maximum() << "}\n";
-                else
-                    std::cout << "NO_BOX\n";
-            }
-            std::cout << "camera position = " << camera.position << "\n";
         }
 
         long long int delta_time = tz::utility::time::now() - time;

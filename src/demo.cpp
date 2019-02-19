@@ -30,19 +30,22 @@ void init()
     Font font("../../../res/runtime/fonts/Comfortaa-Regular.ttf", 36);
     Label& label = wnd.emplace_child<Label>(Vector2I{100, 50}, font, Vector3F{0.0f, 0.3f, 0.0f}, " ");
     ProgressBar& progress = wnd.emplace_child<ProgressBar>(Vector2I{0, 50}, Vector2I{100, 50}, ProgressBarTheme{{{0.5f, {0.0f, 0.0f, 1.0f}}, {1.0f, {1.0f, 0.0f, 1.0f}}}, {0.1f, 0.1f, 0.1f}}, 0.5f);
-    Label& node_label = wnd.emplace_child<Label>(Vector2I{0, 300}, font, Vector3F{0.3f, 0.1f, 0.0f}, " ");
 
     KeyListener key_listener(wnd);
     MouseListener mouse_listener(wnd);
 
     Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Maze 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Maze 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Maze 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Label& node_label = wnd.emplace_child<Label>(Vector2I{330, 100}, font, Vector3F{0.3f, 0.1f, 0.0f}, " ");
+    Button& maze1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Maze 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& maze2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Maze 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& maze3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Maze 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& dynamic1_button = wnd.emplace_child<Button>(Vector2I{0, 300}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& dynamic2_button = wnd.emplace_child<Button>(Vector2I{0, 350}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& dynamic3_button = wnd.emplace_child<Button>(Vector2I{0, 400}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
 
-    constexpr float speed = 0.05f;
+    constexpr float speed = 0.5f;
     Shader render_shader("../../../src/shaders/3D_FullAssets");
 
     Shader gui_shader("../../../src/shaders/Gui");
@@ -56,11 +59,32 @@ void init()
     Scene scene1 = importer1.retrieve();
     Scene scene2 = importer2.retrieve();
     Scene scene3 = importer3.retrieve();
+    Scene dynamic1 = importer1.retrieve();
+    Scene dynamic2 = importer2.retrieve();
+    Scene dynamic3 = importer3.retrieve();
     Scene* scene = &scene1;
 
-    scene1_button.set_callback([&scene, &scene1, &camera](){scene = &scene1; camera.position = {110, 100, -110};});
-    scene2_button.set_callback([&scene, &scene2, &camera](){scene = &scene2; camera.position = {1100, 1000, -1100};});
-    scene3_button.set_callback([&scene, &scene3, &camera](){scene = &scene3; camera.position = {};});
+    auto get_height = [&]()->float
+    {
+        if(scene == &scene1 || scene == &dynamic1)
+            return 100.0f;
+        else if(scene == &scene2 || scene == &dynamic2)
+            return 1000.0f;
+        else if(scene == &scene3 || scene == &dynamic3)
+            return 10.0f;
+        else
+            return 0.0f;
+    };
+
+    bool dynamic = false;
+
+    maze1_button.set_callback([&scene, &scene1, &camera, &dynamic](){scene = &scene1; camera.position = {110, 100, -110}; dynamic = false;});
+    maze2_button.set_callback([&scene, &scene2, &camera, &dynamic](){scene = &scene2; camera.position = {1100, 1000, -1100}; dynamic = false;});
+    maze3_button.set_callback([&scene, &scene3, &camera, &dynamic](){scene = &scene3; camera.position = {11, 10, -11}; dynamic = false;});
+
+    dynamic1_button.set_callback([&scene, &dynamic1, &camera, &dynamic](){scene = &dynamic1; camera.position = {110, 100, -110}; dynamic = true;});
+    dynamic2_button.set_callback([&scene, &dynamic2, &camera, &dynamic](){scene = &dynamic2; camera.position = {1100, 1000, -1100}; dynamic = true;});
+    dynamic3_button.set_callback([&scene, &dynamic3, &camera, &dynamic](){scene = &dynamic3; camera.position = {11, 10, -11}; dynamic = true;});
 
     AssetBuffer assets;
     assets.emplace<Mesh>("cube_lq", "../../../res/runtime/models/cube.obj");
@@ -123,6 +147,13 @@ void init()
         if(tick_timer.millis_passed(tick_delta))
         {
             scene->update(tick_delta / 1000.0f);
+            if(dynamic)
+            {
+                // if we're in scene2, continue moving all the objects around.
+                static int x = 0;
+                for(const StaticObject& object : scene->get_static_objects())
+                    object.transform.scale.y = get_height() * std::abs(std::sin(std::cbrt(3 + static_cast<int>(object.transform.position.x) % static_cast<int>(scene->get_boundary().get_maximum().x - scene->get_boundary().get_minimum().x)) * ++x * 0.0002f));
+            }
             tick_timer.reload();
         }
         if(wireframe)

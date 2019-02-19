@@ -19,8 +19,8 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
         // if the object is NOT in the PVS, then we don't have to draw it.
         const std::string camera_node = optnode.value();
         const std::string& object_node = object.get_node_name();
-        auto object_pvs = this->potentially_visible_sets.at(object_node);
-        if(object_pvs.find(camera_node) == object_pvs.end())
+        auto object_pvs = this->potentially_visible_sets.at(camera_node);
+        if(object_pvs.find(object_node) == object_pvs.end())
         {
             // camera is NOT in one of the PVS
             return true;

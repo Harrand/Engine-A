@@ -23,7 +23,7 @@ int main()
 
 void init()
 {
-    Window wnd("Engine A Development Window", 0, 30, 1920, 1080);
+    Window wnd("Engine A - PVSOC Demo", 0, 30, 1920, 1080);
     wnd.set_swap_interval_type(Window::SwapIntervalType::IMMEDIATE_UPDATES);
 
     // During init, enable debug output
@@ -36,9 +36,9 @@ void init()
     MouseListener mouse_listener(wnd);
 
     Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& scene3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Load Scene 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Maze 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Maze 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& scene3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Maze 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
 
@@ -50,17 +50,17 @@ void init()
     Camera camera;
     camera.position = {0, 0, 0};
 
-    SceneImporter importer1{"scene1.xml"};
-    SceneImporter importer2{"scene2.xml"};
-    SceneImporter importer3{"scene3.xml"};
+    SceneImporter importer1{"maze1.xml"};
+    SceneImporter importer2{"maze2.xml"};
+    SceneImporter importer3{"maze3.xml"};
     Scene scene1 = importer1.retrieve();
     Scene scene2 = importer2.retrieve();
     Scene scene3 = importer3.retrieve();
     Scene* scene = &scene1;
 
-    scene1_button.set_callback([&scene, &scene1](){scene = &scene1;});
-    scene2_button.set_callback([&scene, &scene2](){scene = &scene2;});
-    scene3_button.set_callback([&scene, &scene3](){scene = &scene3;});
+    scene1_button.set_callback([&scene, &scene1, &camera](){scene = &scene1; camera.position = {110, 100, -110};});
+    scene2_button.set_callback([&scene, &scene2, &camera](){scene = &scene2; camera.position = {1100, 1000, -1100};});
+    scene3_button.set_callback([&scene, &scene3, &camera](){scene = &scene3; camera.position = {};});
 
     AssetBuffer assets;
     assets.emplace<Mesh>("cube_lq", "../../../res/runtime/models/cube.obj");

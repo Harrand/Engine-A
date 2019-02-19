@@ -62,10 +62,7 @@ bool AABB::intersects(const Vector3F& point) const
 	bool meet_x = this->minimum.x <= point.x && this->maximum.x >= point.x;
 	bool meet_y = this->minimum.y <= point.y && this->maximum.y >= point.y;
 	bool meet_z = this->minimum.z <= point.z && this->maximum.z >= point.z;
-    bool meet_x_inverse = this->maximum.x <= point.x && this->minimum.x >= point.x;
-    bool meet_y_inverse = this->maximum.y <= point.y && this->minimum.y >= point.y;
-    bool meet_z_inverse = this->maximum.z <= point.z && this->minimum.z >= point.z;
-	return (meet_x && meet_y && meet_z) || (meet_x_inverse && meet_y_inverse && meet_z_inverse);
+	return (meet_x && meet_y && meet_z);
 }
 
 AABB AABB::expand_to(const AABB &other) const

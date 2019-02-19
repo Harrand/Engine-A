@@ -564,7 +564,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object20>
 
 	<object21>
@@ -591,7 +591,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object21>
 
 	<object22>
@@ -618,7 +618,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object22>
 
 	<object23>
@@ -645,7 +645,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object23>
 
 	<object24>
@@ -672,7 +672,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object24>
 
 	<object25>
@@ -699,7 +699,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object25>
 
 	<object26>
@@ -726,7 +726,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object26>
 
 	<object27>
@@ -753,7 +753,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>%</node>
+		<node>c</node>
 	</object27>
 
 	<object28>
@@ -780,7 +780,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>!</node>
+		<node>b</node>
 	</object28>
 
 	<object29>
@@ -807,7 +807,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>@</node>
+		<node>a</node>
 	</object29>
 
 	<object30>
@@ -2428,7 +2428,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>@</node>
+		<node>a</node>
 	</object89>
 
 	<object90>
@@ -2455,7 +2455,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>@</node>
+		<node>a</node>
 	</object90>
 
 	<object91>
@@ -2563,7 +2563,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>*</node>
+		<node>d</node>
 	</object94>
 
 	<object95>
@@ -2590,7 +2590,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>*</node>
+		<node>d</node>
 	</object95>
 
 	<object96>
@@ -2617,7 +2617,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>!</node>
+		<node>b</node>
 	</object96>
 
 	<object97>
@@ -2644,7 +2644,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>!</node>
+		<node>b</node>
 	</object97>
 
 	<object98>
@@ -2671,7 +2671,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>*</node>
+		<node>d</node>
 	</object98>
 
 	<object99>
@@ -2698,7 +2698,7 @@
 			<y>10</y>
 			<z>10</z>
 		</scale>
-		<node>*</node>
+		<node>d</node>
 	</object99>
 
 	<object100>
@@ -2810,46 +2810,97 @@
 	</object103>
 
 
-	<node_set>A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, @, !, %, *, Unknown</node_set>
+	<node_set>A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, a, b, c, d, Unknown</node_set>
 	<node_A>
-		<pvs>A, E, D, F, B, C, H, I</pvs>
+		<pvs>A, J, B, I, M, P</pvs>
 	</node_A>
 	<node_B>
-		<pvs>B, A, E, D, C, F, G, I, H, M</pvs>
+		<pvs>B, A, J, I, L, Q, K, M, P, S</pvs>
 	</node_B>
 	<node_C>
-		<pvs>C, B, D, F, G, H, M, L, A</pvs>
+		<pvs>C, B, I, M, S, L, Q, J, U, T</pvs>
 	</node_C>
 	<node_D>
-		<pvs>D, E, A, B, F, I, G, H</pvs>
+		<pvs>D, C, H, M, G, F, I, L, F, Q</pvs>
 	</node_D>
 	<node_E>
-		<pvs>E, D, F, J, I, K</pvs>
+		<pvs>E, D, F, N, O, G, H, M, I, L</pvs>
 	</node_E>
 	<node_F>
-		<pvs>F, D, A, B, I, G, H, L, M</pvs>
+		<pvs>F, E, N, O, G, M, H, I, L, C, D</pvs>
 	</node_F>
 	<node_G>
-		<pvs>G, H, L, K, M, F, D, A, I</pvs>
+		<pvs>G, F, H, E, D, I, M, L, N</pvs>
 	</node_G>
 	<node_H>
-		<pvs>H, M, L, C, B, A, G, D</pvs>
+		<pvs>H, D, C, I, M, G, F, E, P, O, Q, L</pvs>
 	</node_H>
-	<node_M>
-		<pvs>M, H, C, L, K, I, J, F, B, G</pvs>
-	</node_M>
-	<node_L>
-		<pvs>L, M, H, G, F, I, K, J, C</pvs>
-	</node_L>
 	<node_I>
-		<pvs>I, K, J, L, M, E, G</pvs>
+		<pvs>I, A, B, C, J, L, Q, K, M, P, S, T, U</pvs>
 	</node_I>
 	<node_J>
-		<pvs>J, E, I, L, M, K, G, F, D</pvs>
+		<pvs>J, K, Q, L</pvs>
 	</node_J>
 	<node_K>
-		<pvs>K, L, M, I, J, H, G</pvs>
+		<pvs>K, J, L, Q, I, C, B</pvs>
 	</node_K>
+	<node_L>
+		<pvs>L, Q, K, J, I, B, C, S</pvs>
+	</node_L>
+	<node_M>
+		<pvs>M, B, C, D, E, F, G, H, I, J, L, N, O, P, Q, S, T, U</pvs>
+	</node_M>
+	<node_N>
+		<pvs>N, O, P, M, F, E, G</pvs>
+	</node_N>
+	<node_O>
+		<pvs>O, P, M, H, I, N, F, E, G</pvs>
+	</node_O>
+	<node_P>
+		<pvs>P, O, N, G, H, D, I, B, C, M</pvs>
+	</node_P>
+	<node_Q>
+		<pvs>Q, K, J, L, I, B, C, M, H, D, S</pvs>
+	</node_Q>
+	<node_R>
+		<pvs>R, V, U, S, Q, P, O, N. K</pvs>
+	</node_R>
+	<node_S>
+		<pvs>S, R, Q, V, U, T, M, I, C, B, L, H, D, Y, Z, X, K, P, O, N</pvs>
+	</node_S>
+	<node_T>
+		<pvs>T, S, W, d, c, a, U, Y, Z, X, Q, R, M, P, O, N, K</pvs>
+	</node_T>
+	<node_U>
+		<pvs>U, S, R, V</pvs>
+	</node_U>
+	<node_V>
+		<pvs>V, U, R, Q, K, S</pvs>
+	</node_V>
+	<node_W>
+		<pvs>W, a, d, c, X, T, S</pvs>
+	</node_W>
+	<node_X>
+		<pvs>X, Z, Y, T, S</pvs>
+	</node_X>
+	<node_Y>
+		<pvs>Y, X, T, Z, N, O, S</pvs>
+	</node_Y>
+	<node_Z>
+		<pvs>Z, c, b, d, X, Y, T, S</pvs>
+	</node_Z>
+	<node_a>
+		<pvs>a, W, U, V, T, S</pvs>
+	</node_a>
+	<node_b>
+		<pvs>b, W, a, c, d</pvs>
+	</node_b>
+	<node_c>
+		<pvs>c, a, b, d, X, Z, W, T, S</pvs>
+	</node_c>
+	<node_d>
+		<pvs>d, X, W, T, S, c, Z</pvs>
+	</node_d>
 	<node_Unknown>
 		<pvs>Unknown</pvs>
 	</node_Unknown>

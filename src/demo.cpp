@@ -42,7 +42,7 @@ void init()
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
 
-    constexpr float speed = 0.5f;
+    constexpr float speed = 0.05f;
     Shader render_shader("../../../src/shaders/3D_FullAssets");
 
     Shader gui_shader("../../../src/shaders/Gui");

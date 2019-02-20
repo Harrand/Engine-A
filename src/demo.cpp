@@ -34,14 +34,19 @@ void init()
     KeyListener key_listener(wnd);
     MouseListener mouse_listener(wnd);
 
-    Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    auto make_button = [&wnd, &font](Vector2I position, std::string title)->Button&{return wnd.emplace_child<Button>(position, Vector2I{100, 50}, font, Vector3F{}, title, Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});};
+    Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.5f, 0.5f, 0.5f}, Vector3F{0.95f, 0.95f, 0.95f});
     Label& node_label = wnd.emplace_child<Label>(Vector2I{330, 100}, font, Vector3F{0.3f, 0.1f, 0.0f}, " ");
-    Button& maze1_button = wnd.emplace_child<Button>(Vector2I{0, 150}, Vector2I{100, 50}, font, Vector3F{}, "Maze 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& maze2_button = wnd.emplace_child<Button>(Vector2I{0, 200}, Vector2I{100, 50}, font, Vector3F{}, "Maze 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& maze3_button = wnd.emplace_child<Button>(Vector2I{0, 250}, Vector2I{100, 50}, font, Vector3F{}, "Maze 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& dynamic1_button = wnd.emplace_child<Button>(Vector2I{0, 300}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 1", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& dynamic2_button = wnd.emplace_child<Button>(Vector2I{0, 350}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 2", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
-    Button& dynamic3_button = wnd.emplace_child<Button>(Vector2I{0, 400}, Vector2I{100, 50}, font, Vector3F{}, "Dynamic 3", Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});
+    Button& maze1_button = make_button({0, 150}, "Maze 1");
+    Button& maze2_button = make_button({0, 200}, "Maze 2");
+    Button& maze3_button = make_button({0, 250}, "Maze 3");
+    Button& dynamic1_button = make_button({0, 300}, "Dynamic 1");
+    Button& dynamic2_button = make_button({0, 350}, "Dynamic 2");
+    Button& dynamic3_button = make_button({0, 400}, "Dynamic 3");
+    Button& terrain1_button = make_button({0, 450}, "Terrain 1");
+    Button& terrain2_button = make_button({0, 500}, "Terrain 2");
+    Button& terrain3_button = make_button({0, 550}, "Terrain 3");
+
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
 
@@ -56,12 +61,18 @@ void init()
     SceneImporter importer1{"maze1.xml"};
     SceneImporter importer2{"maze2.xml"};
     SceneImporter importer3{"maze3.xml"};
+    SceneImporter importer4{"terrain1.xml"};
+    SceneImporter importer5{"terrain2.xml"};
+    SceneImporter importer6{"terrain3.xml"};
     Scene scene1 = importer1.retrieve();
     Scene scene2 = importer2.retrieve();
     Scene scene3 = importer3.retrieve();
     Scene dynamic1 = importer1.retrieve();
     Scene dynamic2 = importer2.retrieve();
     Scene dynamic3 = importer3.retrieve();
+    Scene terrain1 = importer4.retrieve();
+    Scene terrain2 = importer5.retrieve();
+    Scene terrain3 = importer6.retrieve();
     Scene* scene = &scene1;
 
     auto get_height = [&]()->float
@@ -85,6 +96,10 @@ void init()
     dynamic1_button.set_callback([&scene, &dynamic1, &camera, &dynamic](){scene = &dynamic1; camera.position = {110, 100, -110}; dynamic = true;});
     dynamic2_button.set_callback([&scene, &dynamic2, &camera, &dynamic](){scene = &dynamic2; camera.position = {1100, 1000, -1100}; dynamic = true;});
     dynamic3_button.set_callback([&scene, &dynamic3, &camera, &dynamic](){scene = &dynamic3; camera.position = {11, 10, -11}; dynamic = true;});
+
+    terrain1_button.set_callback([&scene, &terrain1, &camera, &dynamic](){scene = &terrain1; camera.position = {100, 100, 110}; dynamic = false;});
+    terrain2_button.set_callback([&scene, &terrain2, &camera, &dynamic](){scene = &terrain2; camera.position = {100, 100, 110}; dynamic = false;});
+    terrain3_button.set_callback([&scene, &terrain3, &camera, &dynamic](){scene = &terrain3; camera.position = {100, 100, 110}; dynamic = false;});
 
     AssetBuffer assets;
     assets.emplace<Mesh>("cube_lq", "../../../res/runtime/models/cube.obj");

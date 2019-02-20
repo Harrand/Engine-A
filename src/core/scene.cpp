@@ -423,15 +423,6 @@ std::optional<std::string> Scene::get_node_containing_position(const Vector3F& p
             if(box.intersects(position))
                 return {node};
         }
-        /*
-        auto optbox = this->get_node_bounding_box(node);
-        if(optbox.has_value())
-        {
-            const AABB box = optbox.value();
-            if(box.intersects(position))
-                return node;
-        }
-         */
     }
     return std::nullopt;
 }

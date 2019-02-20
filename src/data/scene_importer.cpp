@@ -68,7 +68,10 @@ Scene SceneImporter::retrieve()
         scene.emplace_object(object.transform, Asset{this->assets.find_mesh(object.mesh_name), this->assets.find_texture(object.texture_name)}, object.node_name);
     }
     for(const TextBasedNode& node : this->imported_nodes)
+    {
         scene.set_potentially_visible_set(node.name, node.potentially_visible_set);
+        scene.compute_node_boundary(node.name);
+    }
     return scene;
 }
 

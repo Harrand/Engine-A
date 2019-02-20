@@ -416,6 +416,14 @@ std::optional<std::string> Scene::get_node_containing_position(const Vector3F& p
 {
     for(const std::string& node : this->get_nodes())
     {
+        if(this->node_boundaries.find(node) != this->node_boundaries.end())
+        {
+            // this node has a boundary.
+            const AABB& box = this->node_boundaries.at(node);
+            if(box.intersects(position))
+                return {node};
+        }
+        /*
         auto optbox = this->get_node_bounding_box(node);
         if(optbox.has_value())
         {
@@ -423,8 +431,19 @@ std::optional<std::string> Scene::get_node_containing_position(const Vector3F& p
             if(box.intersects(position))
                 return node;
         }
+         */
     }
     return std::nullopt;
+}
+
+void Scene::compute_node_boundary(std::string node)
+{
+    auto optbox = this->get_node_bounding_box(node);
+    if(optbox.has_value())
+    {
+        const AABB box = optbox.value();
+        this->node_boundaries.emplace(node, box);
+    }
 }
 
 tz::physics::Axis3D Scene::get_highest_variance_axis_objects() const

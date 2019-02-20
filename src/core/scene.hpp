@@ -231,6 +231,8 @@ public: //TEMP
     std::optional<AABB> get_node_bounding_box(const std::string& node) const;
     // TODO: Document
     std::optional<std::string> get_node_containing_position(const Vector3F& position) const;
+    // TODO: Document
+    void compute_node_boundary(std::string node);
 public:
     /**
      * Protected.
@@ -283,6 +285,8 @@ protected:
     std::vector<Sprite*> sprites_to_delete;
     // TODO: Document
     std::unordered_map<std::string, std::unordered_set<std::string>> potentially_visible_sets;
+    // TODO: Document
+    std::unordered_map<std::string, AABB> node_boundaries;
 };
 
 #include "scene.inl"

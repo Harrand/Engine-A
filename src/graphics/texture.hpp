@@ -98,7 +98,7 @@ public:
 	 * @param gamma_corrected - Whether gamma-correction should be applied to this Texture.
 	 * @param store_bitmap - Whether the internal image-data should be stored in a local Bitmap.
 	 */
-	Texture(std::string filename, bool mipmapping = true, bool gamma_corrected = true);
+	Texture(std::string filename, bool mipmapping = false, bool gamma_corrected = true);
     /**
      * Loads a texture from existing Pixel Data
      * @tparam Pixel - The type of Pixel to store in the Bitmap.

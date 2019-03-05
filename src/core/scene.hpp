@@ -18,6 +18,7 @@ public:
      */
     Scene(const std::initializer_list<StaticObject>& stack_objects = {}, std::vector<std::unique_ptr<StaticObject>> heap_objects = {});
 
+    float get_pvsoc_time_this_frame(bool reset = true);
     /**
      * Render the scene into the currently-bound FrameBuffer.
      * @param render_shader - The Shader with which to render all of the 3D objects in this Scene
@@ -25,7 +26,7 @@ public:
      * @param camera - The Camera whose perspective should be used in rendering the Scene
      * @param viewport_dimensions - The dimensions (width and height) of the currently-bound FrameBuffer's viewport
      */
-    virtual void render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions) const;
+    virtual void render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions);
     /**
      * Invoke all tick-based (Physics) updates for all objects in the Scene.
      * @param delta_time - The time taken, in seconds, since the last update invocation
@@ -287,6 +288,8 @@ protected:
     std::unordered_map<std::string, std::unordered_set<std::string>> potentially_visible_sets;
     // TODO: Document
     std::unordered_map<std::string, AABB> node_boundaries;
+    /// Responsible for profiling the performance of PVSOC directly.
+    TimeProfiler pvsoc_profiler;
 };
 
 #include "scene.inl"

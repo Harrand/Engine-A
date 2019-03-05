@@ -2,6 +2,7 @@
 #define TIME_HPP
 #include <vector>
 #include <functional>
+#include <windows.h>
 
 /**
 * Use this to schedule, record time or pretty much do anything that requires timing.
@@ -36,6 +37,21 @@ private:
 	long long int before, after;
 };
 
+class HighResolutionWindowsTimer
+{
+public:
+    HighResolutionWindowsTimer();
+    void update();
+    void reload();
+    float get_range() const;
+    bool millis_passed(float millis) const;
+private:
+    LARGE_INTEGER start_time;
+    LARGE_INTEGER stop_time;
+    LARGE_INTEGER elapsed;
+    LARGE_INTEGER frequency;
+};
+
 /**
 * Specialised Timer that can be used to calculate FPS during runtime.
 */
@@ -44,7 +60,6 @@ class TimeProfiler
 public:
 	/// Construct the underlying Timer.
 	TimeProfiler();
-
 	/**
 	 * Invoke this at the beginning of your frame construction in the game-loop.
 	 */
@@ -72,11 +87,13 @@ public:
 	 * @return - Average number of frames processed per second
 	 */
 	unsigned int get_fps() const;
+	friend void init(); // Allow init of demo source file to access all deltas.
+	friend class Scene;
 private:
 	/// Container of all the time-deltas, in milliseconds.
 	std::vector<float> deltas;
 	/// Underlying Timer object.
-	Timer tk;
+	HighResolutionWindowsTimer tk;
 };
 
 class FrameScheduler

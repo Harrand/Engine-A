@@ -21,7 +21,7 @@ void Timer::reload()
 
 float Timer::get_range() const
 {
-	return (this->after) - (this->before);
+	return this->after - this->before;
 }
 
 bool Timer::millis_passed(float millis) const
@@ -29,7 +29,32 @@ bool Timer::millis_passed(float millis) const
 	return (this->get_range() > millis);
 }
 
-TimeProfiler::TimeProfiler(): tk(Timer()){}
+HighResolutionWindowsTimer::HighResolutionWindowsTimer(){}
+
+void HighResolutionWindowsTimer::update()
+{
+    QueryPerformanceCounter(&this->stop_time);
+    this->elapsed.QuadPart = (this->stop_time.QuadPart - this->start_time.QuadPart) * 1000000;
+    this->elapsed.QuadPart /= this->frequency.QuadPart;
+}
+
+void HighResolutionWindowsTimer::reload()
+{
+    QueryPerformanceFrequency(&this->frequency);
+    QueryPerformanceCounter(&this->start_time);
+}
+
+float HighResolutionWindowsTimer::get_range() const
+{
+    return this->elapsed.QuadPart / 1000.0f;
+}
+
+bool HighResolutionWindowsTimer::millis_passed(float millis) const
+{
+    return this->get_range() >= millis;
+}
+
+TimeProfiler::TimeProfiler(): tk({}){}
 
 void TimeProfiler::begin_frame()
 {

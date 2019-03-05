@@ -122,6 +122,7 @@ void init()
 
     long long int time = tz::utility::time::now();
     Timer second_timer, tick_timer;
+    std::vector<float> pvsoc_deltas;
     TimeProfiler profiler;
     using namespace tz::graphics;
     while(!wnd.is_close_requested())
@@ -131,11 +132,25 @@ void init()
         progress.set_progress((1 + std::sin(x += 0.01)) / 2.0f);
         second_timer.update();
         tick_timer.update();
+        static bool should_report = false;
         if(second_timer.millis_passed(1000.0f))
         {
             using namespace tz::utility::generic::cast;
             label.set_text(to_string(profiler.get_delta_average()) + " ms (" + to_string(profiler.get_fps()) + " fps)");
             second_timer.reload();
+            // print out time deltas for profiling.
+            static std::size_t cumulative_frame_id;
+            if(should_report)
+            {
+                for (std::size_t frame_id = 0; frame_id < profiler.deltas.size(); frame_id++)
+                {
+                    //std::cout << (cumulative_frame_id + frame_id) << ", " << profiler.deltas[frame_id] << ", " << scene->get_node_containing_position(camera.position).value_or("No Node") << "\n"; // total frame time
+                    std::cout << (cumulative_frame_id + frame_id) << ", " << pvsoc_deltas[frame_id] << ", " << scene->get_node_containing_position(camera.position).value_or("No Node") << "\n"; // pvsoc only
+                }
+                cumulative_frame_id += profiler.deltas.size();
+                pvsoc_deltas.clear();
+                should_report = false;
+            }
             profiler.reset();
             node_label.set_text(scene->get_node_containing_position(camera.position).value_or("No Node"));
         }
@@ -147,6 +162,7 @@ void init()
         if(wireframe)
             tz::graphics::enable_wireframe_render(true);
         scene->render(&render_shader, &gui_shader, camera, {wnd.get_width(), wnd.get_height()});
+        pvsoc_deltas.push_back(scene->get_pvsoc_time_this_frame(true));
         constexpr int tps = 120;
         constexpr float tick_delta = 1000.0f / tps;
         if(tick_timer.millis_passed(tick_delta))
@@ -172,6 +188,7 @@ void init()
             camera.rotation.x += 0.03 * delta.y;
             mouse_listener.reload_mouse_delta();
         }
+        auto get_node_midpoint = [](const AABB& node_boundary)->Vector3F{return (node_boundary.get_minimum() + node_boundary.get_maximum()) / 2.0f;};
         if(key_listener.is_key_pressed("Escape"))
             break;
         if(key_listener.is_key_pressed("W"))
@@ -182,6 +199,48 @@ void init()
             camera.position += camera.left() * delta_time * speed;
         if(key_listener.is_key_pressed("D"))
             camera.position += camera.right() * delta_time * speed;
+        if(key_listener.catch_key_pressed("P"))
+        {
+            std::optional<std::string> node = scene->get_node_containing_position(camera.position);
+            const std::string final_node = *std::max_element(scene->get_nodes().begin(), scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
+            if(node.has_value() && node.value() > "A")
+            {
+                std::string node_v = {--node.value()[0]};
+                //std::cout << "moving to node " << node_v << " midpoint.\n";
+                camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+            }
+            else
+            {
+                //std::cout << "resetting to node " << final_node << " midpoint.\n";
+                camera.position = get_node_midpoint(scene->get_node_bounding_box(final_node).value());
+            }
+        }
+        if(key_listener.catch_key_pressed("N"))
+        {
+            std::optional<std::string> node = scene->get_node_containing_position(camera.position);
+            const std::string final_node = *std::max_element(scene->get_nodes().begin(), scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
+            if(node.has_value() && node.value() < final_node)
+            {
+                std::string node_v = {++node.value()[0]};
+                //std::cout << "moving to node " << node_v << " midpoint.\n";
+                camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+            }
+            else
+            {
+                //std::cout << "resetting to node A midpoint.\n";
+                camera.position = get_node_midpoint(scene->get_node_bounding_box("A").value());
+            }
+        }
+        if(key_listener.catch_key_pressed("R"))
+        {
+            should_report = true;
+            /*
+            for(const auto& node : scene->get_nodes())
+            {
+                std::cout << "node " << node << " midpoint = " << get_node_midpoint(scene->get_node_bounding_box(node).value()) << ".\n";
+            }
+            */
+        }
         /*
         if(key_listener.is_key_pressed("Up"))
             example_sprite.position_screenspace.y += 3;

@@ -5,7 +5,15 @@ Scene::Scene(const std::initializer_list<StaticObject>& stack_objects, std::vect
     
 }
 
-void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions) const
+float Scene::get_pvsoc_time_this_frame(bool reset)
+{
+    long double total_time = std::accumulate(this->pvsoc_profiler.deltas.begin(), this->pvsoc_profiler.deltas.end(), 0.0f);
+    if(reset)
+        this->pvsoc_profiler.reset();
+    return total_time;
+}
+
+void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& camera, const Vector2I& viewport_dimensions)
 {
     Frustum camera_frustum(camera, viewport_dimensions.x / viewport_dimensions.y);
     auto is_occluded = [&](const StaticObject& object)->bool
@@ -34,7 +42,10 @@ void Scene::render(Shader* render_shader, Shader* sprite_shader, const Camera& c
         {
             if (std::find(this->objects_to_delete.begin(), this->objects_to_delete.end(), &static_object.get()) != this->objects_to_delete.end())
                 continue;
-            if(!is_occluded(static_object.get()))
+            this->pvsoc_profiler.begin_frame();
+            bool occluded = is_occluded(static_object.get());
+            this->pvsoc_profiler.end_frame();
+            if(!occluded)
                 static_object.get().render(*render_shader, camera, viewport_dimensions);
         }
     }

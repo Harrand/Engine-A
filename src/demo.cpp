@@ -33,6 +33,7 @@ void init()
 
     KeyListener key_listener(wnd);
     MouseListener mouse_listener(wnd);
+    auto get_node_midpoint = [](const AABB& node_boundary)->Vector3F{return (node_boundary.get_minimum() + node_boundary.get_maximum()) / 2.0f;};
 
     auto make_button = [&wnd, &font](Vector2I position, std::string title)->Button&{return wnd.emplace_child<Button>(position, Vector2I{100, 50}, font, Vector3F{}, title, Vector3F{0.1f, 0.1f, 0.1f}, Vector3F{0.8f, 0.8f, 0.8f});};
     Button& wireframe_button = wnd.emplace_child<Button>(Vector2I{0, 100}, Vector2I{100, 50}, font, Vector3F{}, "toggle wireframe", Vector3F{0.5f, 0.5f, 0.5f}, Vector3F{0.95f, 0.95f, 0.95f});
@@ -188,7 +189,6 @@ void init()
             camera.rotation.x += 0.03 * delta.y;
             mouse_listener.reload_mouse_delta();
         }
-        auto get_node_midpoint = [](const AABB& node_boundary)->Vector3F{return (node_boundary.get_minimum() + node_boundary.get_maximum()) / 2.0f;};
         if(key_listener.is_key_pressed("Escape"))
             break;
         if(key_listener.is_key_pressed("W"))

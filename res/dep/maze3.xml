@@ -2821,7 +2821,7 @@
 		<pvs>C, B, I, M, S, L, Q, J, U, T</pvs>
 	</node_C>
 	<node_D>
-		<pvs>D, C, H, M, G, F, I, L, F, Q</pvs>
+		<pvs>D, C, H, M, G, F, I, L, F, Q, P</pvs>
 	</node_D>
 	<node_E>
 		<pvs>E, D, F, N, O, G, H, M, I, L</pvs>
@@ -2845,7 +2845,7 @@
 		<pvs>K, J, L, Q, I, C, B</pvs>
 	</node_K>
 	<node_L>
-		<pvs>L, Q, K, J, I, B, C, S</pvs>
+		<pvs>L, Q, K, J, I, B, C, S, T, M</pvs>
 	</node_L>
 	<node_M>
 		<pvs>M, B, C, D, E, F, G, H, I, J, L, N, O, P, Q, S, T, U</pvs>

@@ -45,8 +45,15 @@ void init()
     Button& dynamic2_button = make_button({0, 350}, "Dynamic 2");
     Button& dynamic3_button = make_button({0, 400}, "Dynamic 3");
     Button& terrain1_button = make_button({0, 450}, "Terrain 1");
-    Button& terrain2_button = make_button({0, 500}, "Terrain 2");
-    Button& terrain3_button = make_button({0, 550}, "Terrain 3");
+
+    std::vector<Vector3F> terrain1_midpoints;
+    for(float x = 0; x < 220; x += 20)
+    {
+        for(float y = 0; y < 220; y += 20)
+        {
+            terrain1_midpoints.emplace_back(x, 1.0f, y);
+        }
+    }
 
     bool wireframe = false;
     wireframe_button.set_callback([&wireframe](){wireframe = !wireframe;});
@@ -63,8 +70,6 @@ void init()
     SceneImporter importer2{"maze2.xml"};
     SceneImporter importer3{"maze3.xml"};
     SceneImporter importer4{"terrain1.xml"};
-    SceneImporter importer5{"terrain2.xml"};
-    SceneImporter importer6{"terrain3.xml"};
     Scene scene1 = importer1.retrieve();
     Scene scene2 = importer2.retrieve();
     Scene scene3 = importer3.retrieve();
@@ -72,8 +77,6 @@ void init()
     Scene dynamic2 = importer2.retrieve();
     Scene dynamic3 = importer3.retrieve();
     Scene terrain1 = importer4.retrieve();
-    Scene terrain2 = importer5.retrieve();
-    Scene terrain3 = importer6.retrieve();
     Scene* scene = &scene1;
 
     auto get_height = [&]()->float
@@ -99,8 +102,6 @@ void init()
     dynamic3_button.set_callback([&scene, &dynamic3, &camera, &dynamic](){scene = &dynamic3; camera.position = {11, 10, -11}; dynamic = true;});
 
     terrain1_button.set_callback([&scene, &terrain1, &camera, &dynamic](){scene = &terrain1; camera.position = {100, 100, 110}; dynamic = false;});
-    terrain2_button.set_callback([&scene, &terrain2, &camera, &dynamic](){scene = &terrain2; camera.position = {100, 100, 110}; dynamic = false;});
-    terrain3_button.set_callback([&scene, &terrain3, &camera, &dynamic](){scene = &terrain3; camera.position = {100, 100, 110}; dynamic = false;});
 
     AssetBuffer assets;
     assets.emplace<Mesh>("cube_lq", "../../../res/runtime/models/cube.obj");
@@ -172,9 +173,9 @@ void init()
             if(dynamic)
             {
                 // if we're in scene2, continue moving all the objects around.
-                static int x = 0;
+                static int x = 8063;
                 for(const StaticObject& object : scene->get_static_objects())
-                    object.transform.scale.y = get_height() * std::abs(std::sin(std::cbrt(3 + static_cast<int>(object.transform.position.x) % static_cast<int>(scene->get_boundary().get_maximum().x - scene->get_boundary().get_minimum().x)) * ++x * 0.0002f));
+                    object.transform.scale.y = get_height() * std::abs(std::sin(std::cbrt(3 + static_cast<int>(object.transform.position.x) % static_cast<int>(scene->get_boundary().get_maximum().x - scene->get_boundary().get_minimum().x)) * x * 0.0002f));
             }
             tick_timer.reload();
         }
@@ -199,36 +200,54 @@ void init()
             camera.position += camera.left() * delta_time * speed;
         if(key_listener.is_key_pressed("D"))
             camera.position += camera.right() * delta_time * speed;
+        static std::size_t terrain_node_counter = 0;
         if(key_listener.catch_key_pressed("P"))
         {
-            std::optional<std::string> node = scene->get_node_containing_position(camera.position);
-            const std::string final_node = *std::max_element(scene->get_nodes().begin(), scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
-            if(node.has_value() && node.value() > "A")
+            if(scene == &terrain1)
             {
-                std::string node_v = {--node.value()[0]};
-                //std::cout << "moving to node " << node_v << " midpoint.\n";
-                camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+                if(--terrain_node_counter < 0)
+                    terrain_node_counter = terrain1_midpoints.size() - 1;
+                camera.position = terrain1_midpoints[terrain_node_counter];
             }
             else
             {
-                //std::cout << "resetting to node " << final_node << " midpoint.\n";
-                camera.position = get_node_midpoint(scene->get_node_bounding_box(final_node).value());
+                std::optional < std::string > node = scene->get_node_containing_position(camera.position);
+                const std::string final_node = *std::max_element(scene->get_nodes().begin(),
+                                                                 scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
+                if (node.has_value() && node.value() > "A")
+                {
+                    std::string node_v = {--node.value()[0]};
+                    //std::cout << "moving to node " << node_v << " midpoint.\n";
+                    camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+                } else
+                {
+                    //std::cout << "resetting to node " << final_node << " midpoint.\n";
+                    camera.position = get_node_midpoint(scene->get_node_bounding_box(final_node).value());
+                }
             }
         }
         if(key_listener.catch_key_pressed("N"))
         {
-            std::optional<std::string> node = scene->get_node_containing_position(camera.position);
-            const std::string final_node = *std::max_element(scene->get_nodes().begin(), scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
-            if(node.has_value() && node.value() < final_node)
+            if(scene == &terrain1)
             {
-                std::string node_v = {++node.value()[0]};
-                //std::cout << "moving to node " << node_v << " midpoint.\n";
-                camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+                if(++terrain_node_counter >= terrain1_midpoints.size())
+                    terrain_node_counter = 0;
+                camera.position = terrain1_midpoints[terrain_node_counter];
             }
             else
             {
-                //std::cout << "resetting to node A midpoint.\n";
-                camera.position = get_node_midpoint(scene->get_node_bounding_box("A").value());
+                std::optional < std::string > node = scene->get_node_containing_position(camera.position);
+                const std::string final_node = *std::max_element(scene->get_nodes().begin(),
+                                                                 scene->get_nodes().end());//*(std::next(scene->get_nodes().begin()));
+                if (node.has_value() && node.value() < final_node)
+                {
+                    std::string node_v = {++node.value()[0]};
+                    //std::cout << "moving to node " << node_v << " midpoint.\n";
+                    camera.position = get_node_midpoint(scene->get_node_bounding_box(node_v).value());
+                } else {
+                    //std::cout << "resetting to node A midpoint.\n";
+                    camera.position = get_node_midpoint(scene->get_node_bounding_box("A").value());
+                }
             }
         }
         if(key_listener.catch_key_pressed("R"))

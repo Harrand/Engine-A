@@ -173,9 +173,9 @@ void init()
             if(dynamic)
             {
                 // if we're in scene2, continue moving all the objects around.
-                static int x = 8063;
+                static int x = 0;
                 for(const StaticObject& object : scene->get_static_objects())
-                    object.transform.scale.y = get_height() * std::abs(std::sin(std::cbrt(3 + static_cast<int>(object.transform.position.x) % static_cast<int>(scene->get_boundary().get_maximum().x - scene->get_boundary().get_minimum().x)) * x * 0.0002f));
+                    object.transform.scale.y = get_height() * std::abs(std::sin(std::cbrt(3 + static_cast<int>(object.transform.position.x) % static_cast<int>(scene->get_boundary().get_maximum().x - scene->get_boundary().get_minimum().x)) * ++x * 0.0002f));
             }
             tick_timer.reload();
         }
